@@ -24,6 +24,9 @@ BLOBS = {
     "7a2a7a21dc594655821ecd9258d9def5": "../charts/3-3_tradeoff_curve.png",
     "685284cbba5b762cf9166abcf68bb6c3": "../charts/4-2_redteam_heatmap.png",
     "914ae8a282c2f0835938453d3b321a3a": "../charts/3-2_decision_matrix.png",
+    "453b1ac272119e4bfadd1146b99e9c6a": "../charts/2-1_signal_lift.png",
+    "24961c8137889db49423824cd10561b5": "../charts/3-1_triage_funnel.png",
+    "90c55b3fda1a38fed8d79f7fbdd7867b": "../charts/4-1_verdict_anatomy_persuaded.png",
 }
 ICONS = {"Warning": "⚠", "Users": "👥", "Chat": "💬"}
 

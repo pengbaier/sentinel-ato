@@ -24,4 +24,4 @@ data/results_llm.json
 
 # local outputs kept off GitHub
 video/
-docs/Sentinel_demo_slides.pdf
+docs/*.pdf
