@@ -3,8 +3,16 @@
 > Hackathon theme: **Trust & Risk — build the AI that holds the line.**
 > It catches the bad cases, clears the good ones, and can't be talked out of it.
 
-**▶ [Live demo — test a login in your browser](https://pengbaier.github.io/sentinel-ato/)** · built with
-[PRISM by Block Convey](https://blockconvey.com/prism) and [Nicrron](https://nicrron.ai)
+## Hackathon kit
+
+| | Link |
+|---|---|
+| ▶ **Live demo** — test a login in your browser | **https://pengbaier.github.io/sentinel-ato/** |
+| 🎞 **Slides** (16, with speaker notes: press N) | https://pengbaier.github.io/sentinel-ato/slides/ |
+| 📝 **Demo script** — 5-minute core, weaknesses, Q&A | [docs/demo_script.md](docs/demo_script.md) |
+| 📊 **Charts** — 12 interactive, in five acts | [Gallery below](#visual-insights--the-demo-in-five-acts) · [docs/charts](docs/charts) |
+| 🖥 **Analyst console** (Streamlit) | [Quick start](#quick-start) |
+| 🧩 **Sponsor tools** | [PRISM by Block Convey](https://blockconvey.com/prism) · [Nicrron](https://nicrron.ai) |
 
 Sentinel scores every account session for takeover (ATO) risk with a layered pipeline:
 deterministic rules set a **risk floor**, a per-user anomaly model measures how unlike *this user* a session is,
@@ -160,7 +168,13 @@ sentinel/
   rba.py                  real-data benchmark (sample, eval, label-free calibration, sweep)
   viz.py                  Altair charts + computed takeaways;  export_charts.py -> docs/charts/
 data/                     benchmark outputs + RBA sample (see data/README.md)
-docs/charts/              exported charts (PNG + HTML)
+docs/                     GitHub Pages site (served at pengbaier.github.io/sentinel-ato)
+  index.html              live demo: in-browser login tester (rules + detector ported to JS), hub, chart gallery
+  slides/index.html       web slide deck (built by scripts/build_slides.py)
+  charts/                 exported charts (PNG + interactive HTML)
+  demo_script.md          presentation script and Q&A cheat sheet
+slides/src/               slide deck sources (deck.json, deck.css, one HTML file per slide)
+scripts/build_slides.py   slides/src -> docs/slides/index.html
 ```
 
 ## Credits

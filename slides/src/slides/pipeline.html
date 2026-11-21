@@ -1,0 +1,17 @@
+<section id="pipeline">
+<p class="eyebrow">How a verdict is made</p>
+<h2>Five layers, one verdict</h2>
+<div class="chain">
+<div class="card rise" style="--i:0"><p class="num">1</p><h3>Features</h3><p class="small">Each session compared with the user’s own history and with all users.</p></div>
+<x-connector head="end"></x-connector>
+<div class="card rise" style="--i:1"><p class="num">2</p><h3>Rules → floor</h3><p class="small">Impossible travel, credential stuffing, reset-then-payout set a minimum risk.</p></div>
+<x-connector head="end"></x-connector>
+<div class="card rise" style="--i:2"><p class="num">3</p><h3>Anomaly model</h3><p class="small">Isolation Forest flags what is unusual for this user.</p></div>
+<x-connector head="end"></x-connector>
+<div class="card hot rise" style="--i:3"><p class="num">4</p><h3>AI investigator</h3><p class="small">Claude explains the case and may raise risk, never lower it.</p></div>
+<x-connector head="end"></x-connector>
+<div class="card rise" style="--i:4"><p class="num">5</p><h3>Policy engine</h3><p class="small">Plain code picks allow, MFA challenge or lock.</p></div>
+</div>
+<div class="spacer"></div>
+<p class="formula rise" style="--i:5">final risk = max(rule floor, AI risk)</p><aside>~30 s. Five layers. We compare each session with the user’s own history. Deterministic rules set a floor — impossible travel, credential stuffing, a password reset followed by a payout. An Isolation Forest catches what is unusual for this particular user. Then Claude investigates and writes the explanation; it can raise the risk but never lower it. Finally, plain code makes the decision. The whole guarantee fits in one line: final risk is the max of the rule floor and the AI’s risk.</aside>
+</section>

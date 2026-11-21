@@ -1,0 +1,14 @@
+<section id="weak" class="paper">
+<p class="eyebrow">Honest limitations</p>
+<h2>Where it falls short today</h2>
+<table class="grid">
+<tr><th style="width:44%">Weakness</th><th>Why it matters</th></tr>
+<tr><td>12 of 87 real takeovers pass at login</td><td>They match the owner’s device, country and network</td></tr>
+<tr><td>Synthetic 100% is an upper bound</td><td>The rules were written knowing those scenarios</td></tr>
+<tr><td>Benchmark data is re-generated for privacy</td><td>Behaviour is real; IPs and user agents are artificial</td></tr>
+<tr><td>Manipulation detector tuned on our own attacks</td><td>Needs held-out, third-party red teaming</td></tr>
+<tr><td>The AI adds about 3 s per flagged case</td><td>Fine for review queues, too slow for inline login</td></tr>
+<tr><td>No insider or privileged-session coverage</td><td>Alone, it would not have stopped the Binance breach</td></tr>
+</table>
+<aside>~25 s. Where we fall short. Twelve real takeovers get through because at login they look exactly like the owner. Our synthetic 100% is an upper bound. The benchmark’s behaviour is real but its IPs are artificial. Our manipulation detector was tuned on attacks we wrote. The AI adds about three seconds per flagged case, fine for a review queue but not inline. And to be clear: on its own Sentinel would not have stopped the Binance breach — that was an insider-identity attack, which is our next target.</aside>
+</section>

@@ -1,0 +1,18 @@
+<section id="stack">
+<p class="eyebrow">Tools and techniques</p>
+<h2>Sponsor tools, open data, plain Python</h2>
+<table class="grid">
+<tr><th style="width:22%">Layer</th><th style="width:33%">Tool</th><th>What it does here</th></tr>
+<tr><td>LLM access</td><td>Nicrron gateway → Claude Sonnet 5.5 / Opus 5.5</td><td>One OpenAI-compatible API; temperature-0 calls are cached</td></tr>
+<tr><td>Observability</td><td>PRISM by Block Convey</td><td>Every investigation traced with its floor, verdict and rules</td></tr>
+<tr><td>Guardrails</td><td>PRISM prompt-injection rule + local detector</td><td>Support-chat text checked before the AI reads it</td></tr>
+<tr><td>Anomaly detection</td><td>scikit-learn Isolation Forest</td><td>Per-user deviation and population rarity; thresholds set without labels</td></tr>
+<tr><td>Data</td><td>RBA login dataset + scenario generator</td><td>33M real-world-based logins; 12 labelled scenario types</td></tr>
+<tr><td>Analyst console</td><td>Streamlit + Altair</td><td>Live cases, attacker chat, red team, nine charts</td></tr>
+</table>
+<div class="spacer"></div>
+<div class="row" style="gap:24px">
+<p class="pill">Built in one day</p><p class="pill">~2,100 lines of Python</p><p class="pill">Runs offline without AI keys</p><p class="pill">github.com/pengbaier/sentinel-ato</p>
+</div>
+<aside>~20 s. The stack. Claude through the Nicrron gateway, so we can swap or fall back between models with one API. PRISM by Block Convey traces every investigation and provides a prompt-injection guardrail. scikit-learn for the anomaly model, a public 33-million-login dataset for honest evaluation, and a Streamlit console. About 2,100 lines of Python, built today, and it runs fully offline if the AI is unavailable.</aside>
+</section>

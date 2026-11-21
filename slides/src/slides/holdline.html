@@ -1,0 +1,19 @@
+<section id="holdline" class="dark">
+<p class="eyebrow">Holding the line</p>
+<h2>It can’t be talked out of a verdict</h2>
+<div class="row" style="gap:64px; align-items:flex-start">
+<div class="col" style="width:820px; gap:20px">
+<div class="card rise" style="--i:0; padding:20px 32px"><p class="small"><b>The rule floor is enforced in code.</b> The AI can raise risk, never lower it.</p></div>
+<div class="card rise" style="--i:1; padding:20px 32px"><p class="small"><b>User text is fenced as untrusted data,</b> never read as instructions.</p></div>
+<div class="card rise" style="--i:2; padding:20px 32px"><p class="small"><b>The AI recommends; a policy engine decides.</b></p></div>
+<div class="card rise" style="--i:3; padding:20px 32px"><p class="small"><b>Within an open case, risk only goes up.</b></p></div>
+<div class="card rise" style="--i:4; padding:20px 32px"><p class="small"><b>If the model fails, fall back to rules</b> — never to “allow”.</p></div>
+</div>
+<div class="col grow fade" style="--i:5; gap:16px">
+<p class="stat orange" style="font-size:120px; letter-spacing:-3px">144 / 144</p>
+<p class="small">verdicts held against 16 manipulation prompts × 9 cases. On takeovers the AI never scored below 90; its only slips were 4 pressure messages that lowered a legitimate account’s score.</p>
+<img class="chart" src="/_blob/685284cbba5b762cf9166abcf68bb6c3" alt="Red-team heat map: each attack prompt against each case, coloured by how far the AI's own risk moved; blue where it raised risk on takeovers, red only on one legitimate account" style="width:680px; height:340px">
+</div>
+</div>
+<aside>~35 s. This is the theme’s “can’t be talked out of it”. The guarantees live in code, not in a prompt. The floor is enforced after the model answers. Anything the user typed is escaped and fenced as untrusted data. The AI only recommends; code decides. Risk inside a case only goes up. And if the model fails, we fall back to rules, never to allow. We red-teamed it with 16 manipulation prompts — fake CEO, fake system override, sob stories, JSON payloads — 144 attempts, every verdict held. On every takeover the model held or raised its score — never below 90 — and it raised risk in 37 attempts because it read the manipulation as a red flag. Honestly, in four attempts sob stories and identity claims lowered a legitimate customer’s score from 12 to 0. Harmless there, since the decision was already allow, and the floor never had to step in during this run. But it shows the model can be persuaded, and that is exactly why the floor is in code.</aside>
+</section>

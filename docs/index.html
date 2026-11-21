@@ -113,8 +113,10 @@ footer { padding: 24px 0 48px; color: var(--muted); font-size: 13px; border-top:
   <h1>Sentinel — account-takeover defense that can’t be talked out of a verdict</h1>
   <p class="lead">An AI co-pilot for risk analysts at financial firms and transaction platforms. It catches account takeovers, clears good customers, and keeps the final decision in code so persuasion can’t lower the risk.</p>
   <div class="links">
-    <a class="btn" href="https://github.com/pengbaier/sentinel-ato">⌥ Code on GitHub</a>
     <a class="btn" href="#try">▶ Try a login live</a>
+    <a class="btn" href="slides/">🎞 Slides <small>16 slides · press N for notes</small></a>
+    <a class="btn" href="https://github.com/pengbaier/sentinel-ato/blob/main/docs/demo_script.md">📝 Demo script</a>
+    <a class="btn" href="https://github.com/pengbaier/sentinel-ato">⌥ Code on GitHub</a>
     <a class="btn" href="https://blockconvey.com/prism" target="_blank" rel="noopener">PRISM by Block Convey <small>tracing &amp; guardrails</small></a>
     <a class="btn" href="https://nicrron.ai" target="_blank" rel="noopener">Nicrron <small>LLM gateway</small></a>
     <a class="btn" href="https://github.com/das-group/rba-dataset" target="_blank" rel="noopener">RBA login dataset <small>real-world benchmark</small></a>
@@ -214,6 +216,25 @@ footer { padding: 24px 0 48px; color: var(--muted); font-size: 13px; border-top:
   </div>
 </section>
 
+<section id="kit">
+  <h2>Hackathon kit — everything in one place</h2>
+  <p class="sub">All public, no sign-in needed.</p>
+  <div class="tools">
+    <div class="card"><h3>🎞 Presentation</h3><p>The 16-slide pitch: the Binance breach, what Sentinel is, how it holds the line, real-data results, weaknesses and next steps. Arrow keys to navigate, N for speaker notes.</p>
+      <a class="btn" href="slides/">Open the slides →</a></div>
+    <div class="card"><h3>📝 Demo script</h3><p>A five-minute core script: one case end to end, the techniques, seven weaknesses with fixes, a Q&amp;A cheat sheet and every number to quote.</p>
+      <a class="btn" href="https://github.com/pengbaier/sentinel-ato/blob/main/docs/demo_script.md">Read the script →</a></div>
+    <div class="card"><h3>▶ This live tester</h3><p>Sentinel’s rules and manipulation detector running in your browser. Nine scenarios, every field editable.</p>
+      <a class="btn" href="#try">Jump to the tester →</a></div>
+    <div class="card"><h3>📊 Charts</h3><p>Twelve interactive charts in five acts: the threat, detection, decisions, holding the line, and the scenario lab.</p>
+      <a class="btn" href="#charts">See the charts →</a></div>
+    <div class="card"><h3>🖥 Full analyst console</h3><p>Python + Streamlit: live cases, attacker chat, red team and the chart story. Runs offline; add keys for the AI investigator and tracing.</p>
+      <a class="btn" href="https://github.com/pengbaier/sentinel-ato#quick-start">Quick start →</a></div>
+    <div class="card"><h3>🧾 Data &amp; results</h3><p>Benchmark outputs, the attributed RBA sample, red-team logs and the scoring code, all in the repo.</p>
+      <a class="btn" href="https://github.com/pengbaier/sentinel-ato/tree/main/data">Browse the data →</a></div>
+  </div>
+</section>
+
 <section>
   <h2>How a verdict is made</h2>
   <p class="sub">Five layers; code keeps the last word.</p>
@@ -248,7 +269,7 @@ footer { padding: 24px 0 48px; color: var(--muted); font-size: 13px; border-top:
   </div>
 </section>
 
-<section>
+<section id="charts">
   <h2>Results in charts</h2>
   <p class="sub">Click any chart for the interactive version. Real data: 87 takeover and ~76k legitimate logins from the RBA dataset; held-out users, thresholds set without labels.</p>
   <div id="gallery"></div>

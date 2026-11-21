@@ -1,0 +1,92 @@
+:root {
+  --dark: #0E1A2B;
+  --dark-2: #172840;
+  --light: #F5F3EE;
+  --light-2: #EAE6DC;
+  --ink: #14213D;
+  --body: #46536A;
+  --body-dark: #B9C6D6;
+  --orange: #EB6834;
+  --blue: #2A78D6;
+  --blue-soft: #8DBBF2;
+  --line-light: #D6D0C2;
+  --line-dark: #2C3F5C;
+}
+
+body { font-family: 'Inter', Arial, sans-serif; color: var(--ink); }
+
+section {
+  padding: 128px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  background: var(--light);
+  color: var(--ink);
+}
+section.dark { background: var(--dark); color: #F5F3EE; }
+section.paper { background: var(--light-2); }
+section.accent { background: var(--orange); color: var(--ink); }
+
+/* type scale: 160 / 72 / 44 / 32 / 24 */
+h1 { font-family: 'Space Grotesk', Arial, sans-serif; font-size: 160px; font-weight: 700; line-height: 1.0; letter-spacing: -4px; margin: 0; }
+h2 { font-family: 'Space Grotesk', Arial, sans-serif; font-size: 72px; font-weight: 700; line-height: 1.08; letter-spacing: -1.5px; margin: 0; }
+h3 { font-family: 'Space Grotesk', Arial, sans-serif; font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0; }
+p { font-size: 32px; line-height: 1.4; margin: 0; }
+
+.eyebrow { font-size: 24px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--orange); }
+section.accent .eyebrow { color: var(--ink); }
+.lead { font-size: 44px; line-height: 1.3; color: var(--body); }
+section.dark .lead { color: var(--body-dark); }
+.body { font-size: 32px; color: var(--body); }
+section.dark .body { color: var(--body-dark); }
+.small { font-size: 24px; line-height: 1.4; color: var(--body); }
+section.dark .small { color: var(--body-dark); }
+section.accent .small { color: var(--ink); }
+.source { font-size: 24px; color: var(--body); }
+section.dark .source { color: #8C9AB0; }
+
+.stat { font-family: 'Space Grotesk', Arial, sans-serif; font-size: 160px; font-weight: 700; line-height: 1.0; letter-spacing: -4px; }
+.stat-md { font-family: 'Space Grotesk', Arial, sans-serif; font-size: 72px; font-weight: 700; line-height: 1.0; letter-spacing: -1.5px; }
+.orange { color: var(--orange); }
+.blue { color: var(--blue); }
+section.dark .blue { color: var(--blue-soft); }
+
+.spacer { flex: 1; }
+.row { display: flex; flex-direction: row; gap: 32px; }
+.col { display: flex; flex-direction: column; gap: 24px; }
+.grow { flex: 1; }
+
+/* cards */
+.card { background: #FBFAF7; border: 2px solid var(--line-light); border-radius: 20px; padding: 36px; display: flex; flex-direction: column; gap: 16px; }
+section.dark .card { background: var(--dark-2); border-color: var(--line-dark); }
+.card .small { color: var(--body); }
+section.dark .card .small { color: var(--body-dark); }
+.card .num { font-family: 'Space Grotesk', Arial, sans-serif; font-size: 44px; font-weight: 700; color: var(--orange); line-height: 1; }
+.card.hot { border-color: var(--orange); }
+
+/* step chain */
+.chain { display: flex; flex-direction: row; align-items: stretch; gap: 0; }
+.chain .card { flex: 1; padding: 28px; }
+.chain x-connector { width: 56px; align-self: center; color: var(--orange); border-width: 3px; }
+
+.bar { width: 160px; height: 10px; background: var(--orange); border-radius: 5px; }
+
+.pill { display: inline-block; font-size: 24px; font-weight: 600; padding: 8px 20px; border-radius: 999px; background: var(--dark-2); color: var(--blue-soft); }
+
+.formula { font-family: 'Space Grotesk', Arial, sans-serif; font-size: 44px; font-weight: 700; color: var(--ink); background: #FBFAF7; border: 2px solid var(--orange); border-radius: 20px; padding: 24px 40px; align-self: flex-start; }
+
+ul.clean { margin: 0; padding-left: 36px; font-size: 32px; line-height: 1.35; color: var(--body); }
+section.dark ul.clean { color: var(--body-dark); }
+ul.clean li { margin-bottom: 14px; }
+
+table.grid { font-size: 24px; color: var(--ink); width: 100%; }
+section.dark table.grid { color: #E8ECF2; }
+
+.chart { background: #FFFFFF; border-radius: 16px; object-fit: contain; }
+
+/* motion: plain rule = finished look */
+.rise { animation: rise 600ms cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 120ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+.fade { animation: fadein 700ms ease-out both; animation-delay: calc(var(--i, 0) * 120ms); }
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }

@@ -1,0 +1,13 @@
+<section id="evidence">
+<p class="eyebrow">Explainable by design</p>
+<h2>Every takeover leaves a fingerprint</h2>
+<div class="row" style="gap:72px; align-items:flex-start">
+<img class="chart fade" src="/_blob/0d0e18d9bd41c72f7b04f62e1d900820" alt="Takeover fingerprint heat map: one row per real takeover login, columns for each signal; locked rows are dark across threat-intel, new country, new network and anomaly score, missed rows at the bottom are nearly blank" style="width:515px; height:620px">
+<div class="col grow" style="gap:20px">
+<div class="card rise" style="--i:0; padding:24px 32px"><h3><span style="color:#B23A2E">Locked · 44</span></h3><p class="small">Threat-intel IP, new country, new network and an extreme anomaly score line up.</p></div>
+<div class="card rise" style="--i:1; padding:24px 32px"><h3><span style="color:#8A5A00">MFA challenge · 31</span></h3><p class="small">Fewer signals. A challenge still stops an attacker who only has the password.</p></div>
+<div class="card hot rise" style="--i:2; padding:24px 32px"><h3><span style="color:#1F7A1F">Missed · 12</span></h3><p class="small">Same country, device and network as the owner — invisible at login. Catching them needs post-login behaviour.</p></div>
+</div>
+</div>
+<aside>~25 s. Each row is one real takeover, each column a signal. The locked ones light up on threat intel, new country, new network and the anomaly score. The challenged ones have fewer signals, and MFA still stops a password-only attacker. And the bottom rows — twelve misses — are almost blank: those attackers looked exactly like the owner at login. That is our clearest weakness, and the clearest next step.</aside>
+</section>

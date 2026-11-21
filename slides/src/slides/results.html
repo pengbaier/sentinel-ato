@@ -1,0 +1,13 @@
+<section id="results" class="dark">
+<p class="eyebrow">Real-world login benchmark</p>
+<h2>Tested on real-world login data</h2>
+<div class="row" style="gap:40px">
+<div class="col grow rise" style="--i:0; gap:12px"><p class="stat-md orange" style="font-size:120px">86%</p><p class="small">of takeovers stopped — MFA challenge or lock</p></div>
+<div class="col grow rise" style="--i:1; gap:12px"><p class="stat-md orange" style="font-size:120px">51%</p><p class="small">of takeovers locked outright</p></div>
+<div class="col grow rise" style="--i:2; gap:12px"><p class="stat-md blue" style="font-size:120px">93%</p><p class="small">of legitimate logins pass with no friction</p></div>
+<div class="col grow rise" style="--i:3; gap:12px"><p class="stat-md blue" style="font-size:120px">0.21%</p><p class="small">of legitimate logins locked by mistake</p></div>
+</div>
+<img class="chart fade" style="--i:4; width:1100px; height:240px" src="/_blob/914ae8a282c2f0835938453d3b321a3a" alt="Decision matrix: takeovers 13.8% allowed, 35.6% MFA, 50.6% locked; legitimate successful logins 93.4% allowed, 6.4% MFA, 0.2% locked">
+<p class="source">87 takeover and 75,865 legitimate logins, RBA dataset (Wiefling et al., ACM TOPS 2022, CC BY 4.0). Synthetic scenarios: 60 / 60 caught, 0 legitimate users locked — an upper bound.</p>
+<aside>~30 s. We didn’t want to grade our own homework, so we tested on a public dataset built from 33 million real logins at a large online service, with takeovers labelled by its incident-response team. On held-out users: 86% of takeovers are stopped, half are locked outright, 93% of real customers pass with no friction, and only 0.2% are wrongly locked. Our synthetic scenarios score 100%, but we treat that as an upper bound.</aside>
+</section>
