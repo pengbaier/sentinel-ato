@@ -3,6 +3,9 @@
 > Hackathon theme: **Trust & Risk — build the AI that holds the line.**
 > It catches the bad cases, clears the good ones, and can't be talked out of it.
 
+**▶ [Live demo — test a login in your browser](https://pengbaier.github.io/sentinel-ato/)** · built with
+[PRISM by Block Convey](https://blockconvey.com/prism) and [Nicrron](https://nicrron.ai)
+
 Sentinel scores every account session for takeover (ATO) risk with a layered pipeline:
 deterministic rules set a **risk floor**, a per-user anomaly model measures how unlike *this user* a session is,
 and an LLM investigator explains the case and may **raise** risk — but code, not the model, makes the final call,
