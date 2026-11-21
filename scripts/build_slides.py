@@ -115,6 +115,28 @@ def main():
     OUT.write_text(page, encoding="utf-8")
     print(f"wrote {OUT} ({len(idx['order'])} slides)")
 
+    # Print layout: every slide on its own 1920x1080 page, no animation, for PDF export.
+    print_css = """
+@page { size: 1920px 1080px; margin: 0; }
+html, body { margin: 0; background: #fff; }
+body > section { width: 1920px; height: 1080px; overflow: hidden; break-after: page; page-break-after: always; }
+body > section aside { display: none; }
+.x-conn { align-self: center; width: 56px; text-align: center; font-size: 40px; font-weight: 700; color: var(--orange); flex: none; }
+.x-icon { font-size: 48px; line-height: 1; }
+*, *::before, *::after { animation: none !important; transition: none !important; }
+* { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+"""
+    printable = f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>{title}</title>
+<link rel="stylesheet" href="{href}">
+<style>{css}</style><style>{print_css}</style></head>
+<body>
+{body}
+</body></html>
+"""
+    (OUT.parent / "print.html").write_text(printable, encoding="utf-8")
+    print(f"wrote {OUT.parent / 'print.html'}")
+
 
 if __name__ == "__main__":
     main()

@@ -21,3 +21,7 @@ data/cases.json
 data/users.json
 data/results.json
 data/results_llm.json
+
+# local outputs kept off GitHub
+video/
+docs/Sentinel_demo_slides.pdf

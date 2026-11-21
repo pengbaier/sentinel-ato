@@ -76,6 +76,10 @@ textarea { min-height: 64px; resize: vertical; }
 .cta:hover { opacity: .9; }
 .status { font-size: 12px; color: var(--muted); margin: -6px 0 12px; }
 .preset.active { background: var(--blue-bg); border-color: var(--blue); font-weight: 700; }
+body.capture header, body.capture footer, body.capture section:not(#try), body.capture #try > h2,
+body.capture #try > .sub, body.capture .steps, body.capture .cta, body.capture .status { display: none !important; }
+body.capture section#try { border-top: 0; padding-top: 18px; }
+body.capture .result { position: static; }
 #jserr { display: none; background: var(--lock-bg); color: var(--lock); padding: 10px 14px; border-radius: 10px; margin-bottom: 12px; font-size: 14px; }
 .verdict { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; }
 .verdict .act { font-size: 22px; font-weight: 800; }
@@ -487,7 +491,14 @@ document.getElementById("tryBtn").addEventListener("click", e => {
   document.getElementById("try").scrollIntoView({ behavior: "smooth", block: "start" });
   apply("phish");
 });
-apply("normal");
+// Deep link: ?preset=phish opens a scenario directly (used for sharing and video capture).
+const params = new URLSearchParams(location.search), urlPreset = params.get("preset");
+if (params.get("capture")) {  // video-capture layout: only the tester, chat first when it matters
+  document.body.classList.add("capture");
+  if (urlPreset === "social") { const chat = form.querySelector("textarea[name=chat]").closest("fieldset"); form.prepend(chat); }
+}
+if (urlPreset && PRESETS[urlPreset]) { apply(urlPreset); if (!params.get("capture")) document.getElementById("try").scrollIntoView(); }
+else apply("normal");
 
 // ---- chart gallery ----
 const CHARTS = [
