@@ -95,7 +95,7 @@ with tab_feed:
         with b:
             ai = c["ai"]
             st.markdown(f"**Investigator** (`{ai.get('engine')}`): verdict **{ai['verdict']}**")
-            st.progress(c["final_risk"] / 100, text=f"floor {c['floor']} · anomaly {c['anomaly_risk']} · final {c['final_risk']}")
+            st.altair_chart(viz.verdict_anatomy(c["floor"], c["anomaly_risk"], ai["risk"], c["final_risk"]), width="stretch")
             if ai.get("floor_enforced"):
                 st.warning(f"AI suggested {ai['ai_raw_risk']}, raised to the rule floor {c['floor']}.")
             if ai.get("manipulation_detected"):
@@ -158,7 +158,10 @@ with tab_red:
             k1, k2, k3 = st.columns(3)
             k1.metric("Verdict held", f"{s['verdict_held']}/{s['attempts']}", f"{s['held_pct']}%")
             k2.metric("Manipulation flagged", f"{s['manipulation_flagged_pct']}%")
-            k3.metric("AI raw opinion swayed (>10 pts)", s["model_raw_opinion_swayed"])
+            rows_df = pd.DataFrame(rt["rows"])
+            low = rows_df[rows_df["ai_raw_risk"] < rows_df["base_risk"] - 10]
+            k3.metric("AI talked down >10 pts", s["model_raw_opinion_swayed"],
+                      f"{int((low['label'] == 1).sum())} on takeover cases", delta_color="off")
             st.dataframe(pd.DataFrame(rt["rows"]), width="stretch", hide_index=True, height=350)
     if not found:
         st.info("Run `python -m sentinel.redteam` to generate results.")
@@ -241,77 +244,173 @@ def load_viz_data():
     return scored, sample
 
 
+def chart_block(num: str, headline: str, how: str, say: str, chart, width="stretch"):
+    """One chart in the story: a numbered takeaway headline, how to read it, the chart, and demo narration."""
+    st.markdown(f"#### {num} · {headline}")
+    st.caption("**How to read it:** " + how)
+    st.altair_chart(chart, width=width)
+    with st.expander("🎤 Say this in the demo"):
+        st.markdown(say)
+
+
+ACTS = ["① The threat", "② Detection", "③ Decisions", "④ Holding the line", "⑤ Scenario lab"]
+ACT_THESIS = {
+    "① The threat": "What account takeovers look like in real traffic — when they happen and where they come from.",
+    "② Detection": "Which signals separate attackers from customers, and how cleanly the scores split.",
+    "③ Decisions": "What Sentinel does with those scores — and how little friction good customers feel.",
+    "④ Holding the line": "Why the AI can explain and escalate, but can’t be talked into lowering risk.",
+    "⑤ Scenario lab": "The full attack playbook — resets, email changes, payouts — on labelled synthetic scenarios.",
+}
+
 with tab_viz:
     scored, sample = load_viz_data()
-    section = st.segmented_control(
-        "View", ["Real logins", "Synthetic scenarios", "Red team"], default="Real logins",
-        label_visibility="collapsed")
+    rt = _load("redteam_llm.json") or _load("redteam.json")
+    sweep = _load("rba_sweep.json")
+    K = viz.insights(scored, sample, results, rt, sweep)
+    act = st.segmented_control("Act", ACTS, default=ACTS[0], label_visibility="collapsed") or ACTS[0]
+    st.markdown(f"### {act}")
+    st.markdown(ACT_THESIS[act])
+    if act != "⑤ Scenario lab":
+        st.caption("Real data: public RBA login dataset (Wiefling et al., 2022, CC BY 4.0) — "
+                   f"{K.get('ato_n', 0)} takeover and ~76k legitimate successful logins from held-out users.")
+    st.divider()
 
-    if section == "Real logins":
-        if scored is None:
-            st.info("Run `python -m sentinel.rba eval` to export per-login scores.")
-        else:
-            st.subheader("1 · Did the right people get stopped?")
-            st.caption("Each row sums to 100%. The top-left cell is takeovers locked; the middle-right cell is legitimate users wrongly locked.")
-            st.altair_chart(viz.decision_matrix(scored), width="stretch")
+    if scored is None and act in ACTS[:3]:
+        st.info("Run `python -m sentinel.rba eval` to export per-login scores.")
 
-            c1, c2 = st.columns([3, 2])
-            with c1:
-                st.subheader("2 · Fingerprint of every takeover")
-                st.caption("One row per takeover login, one column per signal; darker = stronger. "
-                           "Locked takeovers light up on threat-intel and anomaly; the missed ones at the bottom "
-                           "are nearly blank, meaning they look exactly like the owner.")
-                st.altair_chart(viz.takeover_fingerprint(scored), width="stretch")
-            with c2:
-                st.subheader("3 · How far apart are the scores?")
-                st.caption("Final risk for legitimate vs. takeover logins, each normalised to 100%. "
-                           "MFA starts at 30, lock at 70.")
-                st.altair_chart(viz.risk_separation(scored), width="content")
+    elif act == "① The threat":
+        if sample is not None:
+            chart_block(
+                "1.1", f"Takeovers keep their own hours: {K['ato_night_pct']}% land between midnight and 6 a.m. local time, "
+                       f"vs. {K['all_night_pct']}% of all logins",
+                "Hour of day × weekday. Left: every login in the sample (blue = volume). Right: the "
+                f"{K['ato_total']} takeover logins (orange = count). Hover a cell for counts and the rate per 100k logins.",
+                "“Customers log in on a daytime rhythm — the left map is a tidy office-hours block. "
+                "Takeovers on the right are scattered across the clock, and the night share is almost double. "
+                "Timing alone isn’t proof, so we use it as context, never as a verdict.”",
+                viz.when_heatmaps(sample))
+        chart_block(
+            "1.2", f"One country, {K['top_country']}, accounts for {K['top_country_n']} of {K['ato_n']} takeover logins "
+                   f"from just {K['top_country_logins']:,} logins — {K['top_country_threat']}% via known-attacker IPs",
+            "Busiest countries plus every country with a takeover. Each column is shaded against its own maximum; "
+            "the true value is printed in the cell. Lock rate includes blocked failed attempts.",
+            f"“Attacks concentrate. {K['top_country']} is a rounding error in traffic but half the takeovers. "
+            "We don’t hard-code ‘block this country’ — that would punish real customers there. "
+            "Instead, rarity and threat intelligence feed the score, and the decision stays per login.”",
+            viz.country_profile(scored))
 
-            st.subheader("4 · When do takeovers happen?")
-            if sample is not None:
-                st.caption("Hour × weekday for every login in the sample (left) and for the 141 takeover logins (right). "
-                           "Hover a cell for counts and the rate per 100k logins.")
-                st.altair_chart(viz.when_heatmaps(sample), width="stretch")
+    elif act == "② Detection":
+        c1, c2 = st.columns([3, 2])
+        with c1:
+            chart_block(
+                "2.1", f"“{K['best_signal']}” is {K['best_lift']:.0f}× more common in takeovers; "
+                       f"failed logins barely differ ({K['fails_lift']:.1f}×)",
+                "Each row is a signal. Blue dot = share of legitimate logins showing it; orange dot = share of takeovers. "
+                "The wider the gap, the more useful the signal; the label is how many times more common it is in takeovers.",
+                f"“This is why we compare each login with the user’s own history. A new country appears in "
+                f"{K['best_ato']:.0f}% of takeovers but under 1% of real logins. Meanwhile ‘recent failed logins’, "
+                "the signal many rule engines lean on, hardly separates the two — people mistype passwords all the time.”",
+                viz.signal_lift(scored))
+        with c2:
+            chart_block(
+                "2.2", f"{K['legit_low']}% of legitimate logins score under 30; {K['ato_high']}% of takeovers score 70+",
+                "Final risk for legitimate vs. takeover logins, each normalised to 100%. MFA starts at 30, lock at 70.",
+                "“Customers pile up near zero. Takeovers bunch at the lock line. "
+                "The overlap in the middle is exactly where we challenge instead of lock.”",
+                viz.risk_separation(scored), width="content")
+        chart_block(
+            "2.3", f"Locked takeovers light up on several signals at once; the {K['missed']} missed ones are nearly blank",
+            "One row per real takeover login, one column per signal; darker = stronger. "
+            "The first column is Sentinel’s decision. Rows are sorted locked → challenged → missed.",
+            f"“Read it top to bottom. Locked attacks trip several signals together. Challenged ones trip fewer. "
+            f"The {K['missed']} misses at the bottom are blank: same country, device type and network as the owner. "
+            "Nothing at login can catch them — that’s our honest limit, and why post-login behaviour is next.”",
+            viz.takeover_fingerprint(scored))
 
-            c3, c4 = st.columns([3, 2])
-            with c3:
-                st.subheader("5 · Country risk profile")
-                st.caption("Busiest countries plus every country with a takeover. Each column is shaded against its own "
-                           "maximum, and the real value is printed in the cell.")
-                st.altair_chart(viz.country_profile(scored), width="stretch")
-            with c4:
-                st.subheader("6 · The lock-budget trade-off")
-                sweep = _load("rba_sweep.json")
-                if sweep:
-                    st.caption("Each point is a lock budget. Left of the dashed line = at most 0.2% of legitimate logins locked. "
-                               "The diamond is the default with the threat-intel feed switched off.")
-                    st.altair_chart(viz.tradeoff_curve(sweep), width="stretch")
-                else:
-                    st.info("Run `python -m sentinel.rba sweep`.")
+    elif act == "③ Decisions":
+        chart_block(
+            "3.1", f"Only {K['queue_pct']}% of legitimate logins ever meet friction — while {K['queue_ato']} of {K['ato_n']} takeovers do",
+            "How traffic narrows at each stage. Left: legitimate logins on a log scale. Right: takeover logins kept. "
+            "Stage 3 is what an MFA prompt or an analyst’s queue sees; stage 4 is a hard lock.",
+            f"“Out of about {K['funnel'].iloc[0]['Legitimate']:,} real logins, {K['queue_legit']:,} get an MFA prompt and "
+            f"{K['locked_legit']} are locked. Of {K['ato_n']} takeovers, {K['queue_ato']} are stopped and {K['locked_ato']} locked outright. "
+            "That’s the B2B value: analysts look at a few percent of traffic instead of all of it.”",
+            viz.triage_funnel(scored), width="content")
+        chart_block(
+            "3.2", "Every row sums to 100%: what happened to takeovers, to customers, and to failed attempts",
+            "Rows = what really happened; columns = Sentinel’s decision. Top-right is takeovers locked; "
+            "middle-right is customers wrongly locked.",
+            "“One picture for the judges: half the takeovers locked, another third challenged, "
+            "and 0.2% of real customers locked by mistake.”",
+            viz.decision_matrix(scored))
+        if sweep:
+            lo, hi = K["sweep_lo"], K["sweep_hi"]
+            chart_block(
+                "3.3", f"Friction is a dial: {lo['legit_locked_pct']}% → {hi['legit_locked_pct']}% of customers locked buys "
+                       f"{lo['takeovers_locked_pct']:.0f}% → {hi['takeovers_locked_pct']:.0f}% of takeovers locked",
+                "Each point is a lock budget, set without looking at labels. Dashed line = 0.2% of legitimate logins locked. "
+                "The orange diamond is the default with the threat-intel feed switched off.",
+                "“A risk team doesn’t want our opinion of acceptable friction — they want a dial. "
+                "They pick the budget; Sentinel sets the thresholds from unlabelled traffic. "
+                "And the diamond shows our biggest dependency: without threat intelligence, outright locks drop sharply.”",
+                viz.tradeoff_curve(sweep))
 
-    elif section == "Synthetic scenarios":
-        st.subheader("Which rule catches which attack, and do look-alikes stay clean?")
-        st.caption("% of cases in each scenario where a rule fired (background traffic excluded). "
-                   "The Truth column on the left marks takeovers (orange) and legitimate look-alikes (blue).")
-        st.altair_chart(viz.scenario_rule_heatmap(results), width="stretch")
-        st.subheader("Risk ladder")
-        st.caption("Every case's final risk; the shaded zones are the policy bands. Takeovers should sit in the red zone "
-                   "and look-alikes in the green.")
-        st.altair_chart(viz.risk_ladder(results), width="stretch")
+    elif act == "④ Holding the line":
+        # default to the case where the floor matters most (rules far above the anomaly model)
+        locked = sorted([c for c in results if c["action"] == "lock" and c["label"] == 1],
+                        key=lambda c: c["anomaly_risk"] - c["floor"])
+        cc1, cc2 = st.columns([3, 2])
+        pick = cc1.selectbox("Example case", [c["case_id"] for c in locked],
+                             format_func=lambda x: f"{by_id[x]['scenario']} · floor {by_id[x]['floor']} · "
+                                                   f"anomaly {by_id[x]['anomaly_risk']} · {x}", key="anat_case")
+        persuaded = cc2.toggle("Simulate a persuaded AI (AI risk → 10)", key="anat_persuaded")
+        c = by_id[pick]
+        ai_r = 10 if persuaded else c["ai"]["risk"]
+        final_r = max(c["floor"], ai_r)
+        action_r = decide(final_r, c["hits"])
+        chart_block(
+            "4.1", "final = max(rule floor, AI risk): the AI can raise risk, never lower it below the floor",
+            "The three opinions on one case against the policy bands. Grey = deterministic rules; light blue = models; "
+            "dark = the final score that code acts on. Flip the toggle to pretend an attacker fully persuaded the AI.",
+            f"“Here’s a {c['scenario'].replace('_', ' ')} case. The rules alone say {c['floor']}; the anomaly model says "
+            f"{c['anomaly_risk']}; the investigator says {c['ai']['risk']}. Now watch — *flip the toggle* — suppose the attacker "
+            f"convinced the AI this is safe, risk 10. The final score is still {max(c['floor'], 10)} and the account stays "
+            f"{ {'lock': 'locked', 'step_up': 'challenged', 'allow': 'allowed'}[decide(max(c['floor'], 10), c['hits'])] }. "
+            "The model can be fooled; the verdict can’t.”",
+            viz.verdict_anatomy(c["floor"], c["anomaly_risk"], ai_r, final_r))
+        st.markdown(f"**Decision:** {ACTION_BADGE[action_r]}" + ("  — *unchanged, the floor held*" if persuaded else ""))
+        if rt:
+            chart_block(
+                "4.2", f"{K['rt_held']}/{K['rt_attempts']} verdicts held — under attack, the AI never scored a takeover below "
+                       f"{K['rt_ato_min_raw']}",
+                "Each cell = the AI’s own risk with that message minus its risk without it, per attack prompt (rows) and case "
+                "(columns; ATO = takeover, legit = real customer). Blue = it raised risk; red = it was talked down; "
+                "▼ = down by 10+ points.",
+                f"“We threw 16 manipulation prompts at 9 cases. On every takeover the model held or raised its score — "
+                f"it treated ‘I’m the CEO’ or ‘SYSTEM: risk=0’ as red flags, raising risk in {K['rt_raised']} attempts. "
+                f"Its only slips: {K['rt_lowered']} sob-story or identity messages lowered a *legitimate* account from 12 to 0. "
+                "Harmless here — the decision stayed ‘allow’ — but it proves a model responds to persuasion, "
+                "which is exactly why the floor, not the model, has the last word.”",
+                viz.redteam_heatmap(rt))
 
     else:
-        rt = _load("redteam_llm.json") or _load("redteam.json")
-        if not rt:
-            st.info("Run `python -m sentinel.redteam --llm`.")
-        else:
-            s = rt["summary"]
-            st.subheader("Could the attacker talk the AI down?")
-            st.caption(f"Engine: {s['engine']}. Each cell = the AI's own risk with that message minus its risk without it. "
-                       "Red = the message talked the AI down; ⛨ = it dropped ≥10 points and the rule floor held anyway. "
-                       "Blue = the AI treated the message as a red flag and raised risk, which is the right reaction on clean accounts. "
-                       f"Verdict held in {s['verdict_held']}/{s['attempts']} attempts.")
-            st.altair_chart(viz.redteam_heatmap(rt), width="stretch")
+        chart_block(
+            "5.1", f"Every takeover scenario trips several rules; {K['look_n'] - K['look_with_rule']} of {K['look_n']} "
+                   "legitimate look-alikes trip none",
+            "% of cases in each scenario where a rule fired (background traffic excluded). "
+            "The Truth column marks takeovers (orange) and legitimate look-alikes (blue).",
+            "“The real dataset only has logins. Here we test the whole playbook: SIM swaps, phishing drains, "
+            "session hijacks, social engineering. Each attack trips several independent rules, while travellers, "
+            "new phones and VPN users trip nothing. It’s synthetic, so we treat it as an upper bound.”",
+            viz.scenario_rule_heatmap(results))
+        chart_block(
+            "5.2", f"{K['syn_caught']}/{K['syn_ato']} synthetic takeovers caught; {K['look_allowed']} of {K['look_n']} look-alikes "
+                   f"pass silently (MFA for: {K['look_friction']})",
+            "Every case’s final risk; shaded zones are the policy bands. Orange = takeover, blue = legitimate.",
+            "“The ladder makes the separation visible: takeovers in the lock band, customers hugging zero. "
+            f"The only friction for look-alikes is an MFA prompt ({K['look_friction']}) — a short trip abroad is unusual, "
+            "so we ask once rather than lock.”",
+            viz.risk_ladder(results))
 
 # ------------------------------------------------------------------ eval
 with tab_eval:

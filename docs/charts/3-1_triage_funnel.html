@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@6.4.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "background": "white"}, "hconcat": [{"layer": [{"mark": {"type": "bar", "color": "#2a78d6", "cornerRadiusEnd": 4, "height": 26}, "encoding": {"tooltip": [{"field": "stage", "type": "nominal"}, {"field": "Legitimate", "format": ",", "type": "quantitative"}], "x": {"field": "Legitimate", "scale": {"domain": [10, 100000], "type": "log"}, "title": "Legitimate logins (log scale)", "type": "quantitative"}, "x2": {"datum": 10}, "y": {"axis": {"labelLimit": 280, "labelOverlap": false}, "field": "stage", "sort": ["1. Successful logins scored", "2. Triaged (risk \u2265 25)", "3. MFA challenge or lock", "4. Locked"], "title": null, "type": "nominal"}}}, {"mark": {"type": "text", "align": "left", "color": "#888780", "dx": 6, "fontSize": 12}, "encoding": {"text": {"field": "Legitimate", "format": ",", "type": "quantitative"}, "x": {"field": "Legitimate", "type": "quantitative"}, "y": {"axis": {"labelLimit": 280, "labelOverlap": false}, "field": "stage", "sort": ["1. Successful logins scored", "2. Triaged (risk \u2265 25)", "3. MFA challenge or lock", "4. Locked"], "title": null, "type": "nominal"}}}], "height": {"step": 44}, "width": 420}, {"layer": [{"mark": {"type": "bar", "color": "#eb6834", "cornerRadiusEnd": 4, "height": 26}, "encoding": {"tooltip": [{"field": "stage", "type": "nominal"}, {"field": "Takeover", "type": "quantitative"}], "x": {"field": "Takeover", "scale": {"domain": [0, 100]}, "title": "Takeover logins kept", "type": "quantitative"}, "y": {"axis": null, "field": "stage", "sort": ["1. Successful logins scored", "2. Triaged (risk \u2265 25)", "3. MFA challenge or lock", "4. Locked"], "title": null, "type": "nominal"}}}, {"mark": {"type": "text", "align": "left", "color": "#888780", "dx": 6, "fontSize": 12}, "encoding": {"text": {"field": "Takeover", "type": "quantitative"}, "x": {"field": "Takeover", "type": "quantitative"}, "y": {"axis": null, "field": "stage", "sort": ["1. Successful logins scored", "2. Triaged (risk \u2265 25)", "3. MFA challenge or lock", "4. Locked"], "type": "nominal"}}}], "height": {"step": 44}, "width": 220}], "data": {"name": "data-4e49ec60cf11d0eeb904419d677d764d"}, "spacing": 16, "$schema": "https://vega.github.io/schema/vega-lite/v6.4.1.json", "datasets": {"data-4e49ec60cf11d0eeb904419d677d764d": [{"stage": "1. Successful logins scored", "Legitimate": 75865, "Takeover": 87}, {"stage": "2. Triaged (risk \u2265 25)", "Legitimate": 7072, "Takeover": 77}, {"stage": "3. MFA challenge or lock", "Legitimate": 5001, "Takeover": 75}, {"stage": "4. Locked", "Legitimate": 162, "Takeover": 44}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

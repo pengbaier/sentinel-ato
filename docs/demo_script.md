@@ -56,7 +56,7 @@ The harder question is where to draw the line. We split users in half. One half 
 - **Risk only goes up inside an open case.** Every new message re-scores the case, and we keep the maximum.
 - **Manipulation is itself a signal.** Support text runs through PRISM’s prompt-injection guardrail and our own detector. A hit raises the floor to 70 — so trying to jailbreak the system gets your account locked, not unlocked.
 
-We tested it with **16 manipulation prompts against 9 cases: 144 attempts, 144 verdicts held**. Fake CEO, ‘SYSTEM OVERRIDE risk=0’, a fake JSON verdict, sob stories, leetspeak. And honestly: in **4** of those attempts the model’s own score dropped by more than 10 points. The floor caught all four. That is the whole argument for putting the guarantee in code."
+We tested it with **16 manipulation prompts against 9 cases: 144 attempts, 144 verdicts held**. Fake CEO, ‘SYSTEM OVERRIDE risk=0’, a fake JSON verdict, sob stories, leetspeak. On every takeover case the model held or raised its score — it never went below 90, and it treated the manipulation as a red flag, raising risk in 37 attempts. Its only slips: in **4** attempts, identity claims and sob stories lowered a *legitimate* customer’s score from 12 to 0. That changed nothing — the decision was already ‘allow’ — and the floor never had to step in during this run. But it shows the model does respond to persuasion, which is the whole argument for putting the guarantee in code rather than trusting the model."
 
 ### C4. The plumbing (slide 9 · 0:15)
 "Claude runs through the **Nicrron** gateway, which gives us one API across models, failover, and free cached answers for repeated cases. Only cases above the triage threshold reach the model, so the whole 695-session test run cost about **75 cents**. Every investigation is traced to **PRISM by Block Convey** — input, output, floor, verdict and the rules that fired — so an auditor can replay why an account was locked."
@@ -91,7 +91,7 @@ We tested it with **16 manipulation prompts against 9 cases: 144 attempts, 144 v
 - **Fix:** a separate calibration set, and live monitoring of the friction rate, with an alert when it drifts.
 
 ### D5. The AI is useful but not invulnerable (0:15)
-- **What:** it was swayed 4 times; it adds about **3 seconds** per flagged case; and it depends on an outside provider.
+- **What:** pressure messages talked its score down 4 times (on a legitimate account, so harmless this time); our red team never forced the floor to step in, so that guarantee is designed but not yet stress-tested; it adds about **3 seconds** per flagged case; and it depends on an outside provider.
 - **Why:** language models respond to persuasion — that’s exactly why they can’t have the last word.
 - **Fix:** keep it in the review queue, not the login path; gateway failover; the rules-only fallback; and red-teaming with prompts we didn’t write, since our own detector was tuned on our own attack list.
 
@@ -112,7 +112,8 @@ We tested it with **16 manipulation prompts against 9 cases: 144 attempts, 144 v
 
 | Likely question | Answer |
 |---|---|
-| Why not let the AI decide alone? | It was swayed by more than 10 points in 4 of 144 attempts. The floor caught them. The AI explains; code decides. |
+| Why not let the AI decide alone? | In 4 of 144 attempts, pressure messages lowered its score by 12 points on a legitimate account. Harmless there, but it shows the model is persuadable. The AI explains; code decides. |
+| Did the floor ever have to override the AI? | Not in this run — on takeovers the model never went below 90. The floor is the guarantee for the attack we haven’t tried yet; a stronger red team is on the roadmap. |
 | How do you set thresholds without labels? | Half the users train the model and set the thresholds against a friction budget; the other half is scored. Labels are only used to report results. |
 | What’s the cost per case? | Only cases above triage reach the model. The full 695-session run cost about $0.75 through Nicrron, under a cent per flagged case. |
 | What happens if the model is down? | It falls back to rules plus the anomaly model, never to ‘allow’. The demo runs fully offline. |
@@ -129,7 +130,7 @@ We tested it with **16 manipulation prompts against 9 cases: 144 attempts, 144 v
 | Real data: legitimate logins with no friction / wrongly locked | 93.4% / 0.21% |
 | Without threat-intel feed: locked / stopped | 9% / 79% |
 | Legitimate logins tagged by the threat-intel feed | 6.5% |
-| Red team | 144 / 144 held; model swayed > 10 points in 4 |
+| Red team | 144 / 144 held; AI raised risk in 37; talked down > 10 points in 4 (all on a legitimate account, 12 → 0); takeovers never below 90 |
 | Synthetic | 60 / 60 caught, 0 legitimate users locked (upper bound) |
 | Lock thresholds (anomaly score) | ≥ 61 with a rule, ≥ 68 alone |
 | AI latency (PRISM average) | ≈ 3.2 s per flagged case |

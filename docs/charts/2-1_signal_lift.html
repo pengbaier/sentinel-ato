@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@6.4.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "background": "white"}, "layer": [{"data": {"name": "data-9b7c4ca3dc6807bb1c3d92f2a29fd17d"}, "mark": {"type": "rule", "color": "#B8B5AC", "strokeWidth": 3}, "encoding": {"x": {"field": "Legitimate", "scale": {"domain": [0, 100]}, "title": "% of logins showing the signal", "type": "quantitative"}, "x2": {"field": "Takeover"}, "y": {"axis": {"labelLimit": 260, "labelOverlap": false}, "field": "signal", "sort": ["New country", "Anomaly score \u2265 40", "Rare country (population)", "Threat-intel IP", "Rule floor \u2265 40", "Rare network (population)", "New network", "New device", "Recent failed logins"], "title": null, "type": "nominal"}}}, {"data": {"name": "data-26978510774e9b7a211265d9af5664f3"}, "mark": {"type": "circle", "opacity": 1, "size": 220, "stroke": "white", "strokeWidth": 2}, "encoding": {"color": {"field": "truth", "legend": {"orient": "top"}, "scale": {"domain": ["Legitimate", "Takeover"], "range": ["#2a78d6", "#eb6834"]}, "title": null, "type": "nominal"}, "tooltip": [{"field": "signal", "type": "nominal"}, {"field": "truth", "type": "nominal"}, {"field": "pct", "format": ".2f", "title": "% of logins", "type": "quantitative"}, {"field": "lift", "title": "\u00d7 more common in takeovers", "type": "quantitative"}], "x": {"field": "pct", "type": "quantitative"}, "y": {"axis": {"labelLimit": 260, "labelOverlap": false}, "field": "signal", "sort": ["New country", "Anomaly score \u2265 40", "Rare country (population)", "Threat-intel IP", "Rule floor \u2265 40", "Rare network (population)", "New network", "New device", "Recent failed logins"], "title": null, "type": "nominal"}}}, {"data": {"name": "data-9b7c4ca3dc6807bb1c3d92f2a29fd17d"}, "mark": {"type": "text", "align": "left", "color": "#888780", "dx": 12, "fontSize": 12}, "encoding": {"text": {"field": "lbl", "type": "nominal"}, "x": {"field": "Takeover", "type": "quantitative"}, "y": {"axis": {"labelLimit": 260, "labelOverlap": false}, "field": "signal", "sort": ["New country", "Anomaly score \u2265 40", "Rare country (population)", "Threat-intel IP", "Rule floor \u2265 40", "Rare network (population)", "New network", "New device", "Recent failed logins"], "title": null, "type": "nominal"}}, "transform": [{"calculate": "format(datum.lift, '.0f') + '\u00d7'", "as": "lbl"}]}], "height": {"step": 34}, "width": 620, "$schema": "https://vega.github.io/schema/vega-lite/v6.4.1.json", "datasets": {"data-9b7c4ca3dc6807bb1c3d92f2a29fd17d": [{"signal": "New country", "Legitimate": 0.9, "Takeover": 81.6, "lift": 90.4}, {"signal": "Anomaly score \u2265 40", "Legitimate": 1.38, "Takeover": 81.6, "lift": 59.3}, {"signal": "Rare country (population)", "Legitimate": 4.13, "Takeover": 86.2, "lift": 20.8}, {"signal": "Threat-intel IP", "Legitimate": 5.11, "Takeover": 55.2, "lift": 10.8}, {"signal": "Rule floor \u2265 40", "Legitimate": 6.0, "Takeover": 64.4, "lift": 10.7}, {"signal": "Rare network (population)", "Legitimate": 8.82, "Takeover": 88.5, "lift": 10.0}, {"signal": "New network", "Legitimate": 10.22, "Takeover": 87.4, "lift": 8.5}, {"signal": "New device", "Legitimate": 19.19, "Takeover": 44.8, "lift": 2.3}, {"signal": "Recent failed logins", "Legitimate": 30.09, "Takeover": 32.2, "lift": 1.1}], "data-26978510774e9b7a211265d9af5664f3": [{"signal": "New country", "lift": 90.4, "truth": "Legitimate", "pct": 0.9}, {"signal": "Anomaly score \u2265 40", "lift": 59.3, "truth": "Legitimate", "pct": 1.38}, {"signal": "Rare country (population)", "lift": 20.8, "truth": "Legitimate", "pct": 4.13}, {"signal": "Threat-intel IP", "lift": 10.8, "truth": "Legitimate", "pct": 5.11}, {"signal": "Rule floor \u2265 40", "lift": 10.7, "truth": "Legitimate", "pct": 6.0}, {"signal": "Rare network (population)", "lift": 10.0, "truth": "Legitimate", "pct": 8.82}, {"signal": "New network", "lift": 8.5, "truth": "Legitimate", "pct": 10.22}, {"signal": "New device", "lift": 2.3, "truth": "Legitimate", "pct": 19.19}, {"signal": "Recent failed logins", "lift": 1.1, "truth": "Legitimate", "pct": 30.09}, {"signal": "New country", "lift": 90.4, "truth": "Takeover", "pct": 81.6}, {"signal": "Anomaly score \u2265 40", "lift": 59.3, "truth": "Takeover", "pct": 81.6}, {"signal": "Rare country (population)", "lift": 20.8, "truth": "Takeover", "pct": 86.2}, {"signal": "Threat-intel IP", "lift": 10.8, "truth": "Takeover", "pct": 55.2}, {"signal": "Rule floor \u2265 40", "lift": 10.7, "truth": "Takeover", "pct": 64.4}, {"signal": "Rare network (population)", "lift": 10.0, "truth": "Takeover", "pct": 88.5}, {"signal": "New network", "lift": 8.5, "truth": "Takeover", "pct": 87.4}, {"signal": "New device", "lift": 2.3, "truth": "Takeover", "pct": 44.8}, {"signal": "Recent failed logins", "lift": 1.1, "truth": "Takeover", "pct": 32.2}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

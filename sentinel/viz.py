@@ -237,7 +237,7 @@ def risk_ladder(results: list[dict]) -> alt.Chart:
 def redteam_heatmap(rt: dict) -> alt.Chart:
     d = pd.DataFrame(rt["rows"]).copy()
     d["swing"] = d["ai_raw_risk"] - d["base_risk"]
-    d["case_l"] = d["scenario"] + " · " + d["case"].str[-4:]
+    d["case_l"] = np.where(d["label"] == 1, "ATO · ", "legit · ") + d["scenario"] + " · " + d["case"].str[-4:]
     d["held_l"] = np.where(d["held"], "held", "BROKEN")
     attack_order = list(d.groupby("attack")["swing"].mean().sort_values().index)
     base = alt.Chart(d).encode(x=alt.X("case_l:N", title="Case under attack", axis=alt.Axis(labelAngle=-30, labelOverlap=False, labelLimit=200)),
@@ -249,5 +249,164 @@ def redteam_heatmap(rt: dict) -> alt.Chart:
         tooltip=["attack", "scenario", alt.Tooltip("base_risk:Q", title="risk without attack"),
                  alt.Tooltip("ai_raw_risk:Q", title="AI's raw risk"), alt.Tooltip("final_risk:Q", title="final (floor-enforced)"),
                  "action", "held_l", "manipulation_flagged"])
-    mark = base.transform_filter("datum.swing <= -10").mark_text(text="⛨", fontSize=12, color="#ffffff")
+    mark = base.transform_filter("datum.swing <= -10").mark_text(text="▼", fontSize=12, color="#14213D")
     return _cfg((rect + mark).properties(height=alt.Step(26)))
+
+
+# ======================================================================= additions for the demo story
+SIGNAL_TESTS = [
+    ("New country", lambda s: s["new_country"] == 1),
+    ("Anomaly score ≥ 40", lambda s: s["anomaly"] >= 40),
+    ("Rare country (population)", lambda s: s["country_rarity"] >= 2),
+    ("Rare network (population)", lambda s: s["asn_rarity"] >= 3),
+    ("New network", lambda s: s["new_asn"] == 1),
+    ("Threat-intel IP", lambda s: s["threat_ip"] == 1),
+    ("Rule floor ≥ 40", lambda s: s["floor"] >= 40),
+    ("New device", lambda s: s["new_device"] == 1),
+    ("Recent failed logins", lambda s: s["failed_logins"] > 0),
+]
+
+
+def signal_lift_table(scored: pd.DataFrame) -> pd.DataFrame:
+    legit = scored[(scored["label"] == 0) & scored["success"]]
+    ato = scored[scored["label"] == 1]
+    rows = []
+    for name, f in SIGNAL_TESTS:
+        pl, pa = f(legit).mean() * 100, f(ato).mean() * 100
+        rows.append({"signal": name, "Legitimate": round(pl, 2), "Takeover": round(pa, 1),
+                     "lift": round(pa / max(pl, 0.01), 1)})
+    return pd.DataFrame(rows).sort_values("lift", ascending=False)
+
+
+def signal_lift(scored: pd.DataFrame) -> alt.Chart:
+    """Dumbbell: share of legit vs takeover logins showing each signal; the gap is the signal's power."""
+    t = signal_lift_table(scored)
+    order = list(t["signal"])
+    long = t.melt(id_vars=["signal", "lift"], value_vars=["Legitimate", "Takeover"], var_name="truth", value_name="pct")
+    y = alt.Y("signal:N", sort=order, title=None, axis=alt.Axis(labelLimit=260, labelOverlap=False))
+    rule = alt.Chart(t).mark_rule(color="#B8B5AC", strokeWidth=3).encode(
+        y=y, x=alt.X("Legitimate:Q", title="% of logins showing the signal", scale=alt.Scale(domain=[0, 100])), x2="Takeover:Q")
+    dots = alt.Chart(long).mark_circle(size=220, opacity=1, stroke="white", strokeWidth=2).encode(
+        y=y, x="pct:Q",
+        color=alt.Color("truth:N", scale=alt.Scale(domain=list(TRUTH), range=list(TRUTH.values())), title=None,
+                        legend=alt.Legend(orient="top")),
+        tooltip=["signal", "truth", alt.Tooltip("pct:Q", format=".2f", title="% of logins"),
+                 alt.Tooltip("lift:Q", title="× more common in takeovers")])
+    lift = alt.Chart(t).mark_text(align="left", dx=12, fontSize=12, color="#888780").encode(
+        y=y, x="Takeover:Q", text=alt.Text("lift:Q", format=".0f"))
+    lift = lift.transform_calculate(lbl="format(datum.lift, '.0f') + '×'").encode(text="lbl:N")
+    return _cfg((rule + dots + lift).properties(height=alt.Step(34)))
+
+
+def funnel_table(scored: pd.DataFrame) -> pd.DataFrame:
+    s = scored[scored["success"] | (scored["label"] == 1)].copy()
+    s["pre"] = s[["floor", "anomaly"]].max(axis=1)
+    stages = [("Successful logins scored", s.index == s.index),
+              ("Triaged (risk ≥ 25)", s["pre"] >= 25),
+              ("MFA challenge or lock", s["action"] != "allow"),
+              ("Locked", s["action"] == "lock")]
+    rows = []
+    for i, (name, m) in enumerate(stages):
+        rows.append({"stage": f"{i+1}. {name}", "Legitimate": int((m & (s["label"] == 0)).sum()),
+                     "Takeover": int((m & (s["label"] == 1)).sum())})
+    return pd.DataFrame(rows)
+
+
+def triage_funnel(scored: pd.DataFrame) -> alt.Chart:
+    """How the traffic narrows: legit volume on a log scale beside takeovers kept at each stage."""
+    t = funnel_table(scored)
+    order = list(t["stage"])
+    y = alt.Y("stage:N", sort=order, title=None, axis=alt.Axis(labelLimit=280, labelOverlap=False))
+    legit = alt.Chart(t).mark_bar(color=TRUTH["Legitimate"], cornerRadiusEnd=4, height=26).encode(
+        y=y, x=alt.X("Legitimate:Q", title="Legitimate logins (log scale)", scale=alt.Scale(type="log", domain=[10, 100000])),
+        x2=alt.datum(10),  # log bars need a positive baseline
+        tooltip=["stage", alt.Tooltip("Legitimate:Q", format=",")])
+    legit_t = alt.Chart(t).mark_text(align="left", dx=6, fontSize=12, color="#888780").encode(
+        y=y, x="Legitimate:Q", text=alt.Text("Legitimate:Q", format=","))
+    ato = alt.Chart(t).mark_bar(color=TRUTH["Takeover"], cornerRadiusEnd=4, height=26).encode(
+        y=alt.Y("stage:N", sort=order, title=None, axis=None),
+        x=alt.X("Takeover:Q", title="Takeover logins kept", scale=alt.Scale(domain=[0, 100])),
+        tooltip=["stage", "Takeover"])
+    ato_t = alt.Chart(t).mark_text(align="left", dx=6, fontSize=12, color="#888780").encode(
+        y=alt.Y("stage:N", sort=order, axis=None), x="Takeover:Q", text="Takeover:Q")
+    return _cfg(alt.hconcat((legit + legit_t).properties(width=420, height=alt.Step(44)),
+                            (ato + ato_t).properties(width=220, height=alt.Step(44)), spacing=16))
+
+
+def verdict_anatomy(floor: int, anomaly: int, ai_risk: int, final: int, title: str = "") -> alt.Chart:
+    """One case: the three opinions and the final max(), against the policy bands."""
+    d = pd.DataFrame([{"layer": "1. Rule floor", "risk": floor, "kind": "rules"},
+                      {"layer": "2. Anomaly model", "risk": anomaly, "kind": "model"},
+                      {"layer": "3. AI investigator", "risk": ai_risk, "kind": "model"},
+                      {"layer": "4. Final = max(floor, AI)", "risk": final, "kind": "final"}])
+    order = list(d["layer"])
+    band = alt.Chart(pd.DataFrame([{"a": 0, "b": 30, "z": "🟢 allow"}, {"a": 30, "b": 70, "z": "🟡 MFA challenge"},
+                                   {"a": 70, "b": 100, "z": "🔴 lock"}])).mark_rect(opacity=0.10).encode(
+        x="a:Q", x2="b:Q", color=alt.Color("z:N", scale=alt.Scale(domain=list(ACTION_COLOR), range=list(ACTION_COLOR.values())),
+                                           title="Policy band", legend=alt.Legend(orient="top")))
+    y = alt.Y("layer:N", sort=order, title=None, axis=alt.Axis(labelLimit=260, labelOverlap=False))
+    bars = alt.Chart(d).mark_bar(cornerRadiusEnd=4, height=22).encode(
+        y=y, x=alt.X("risk:Q", title="Risk (0–100)", scale=alt.Scale(domain=[0, 100])),
+        color=alt.Color("kind:N", scale=alt.Scale(domain=["rules", "model", "final"], range=["#6A6862", "#86B6EF", "#14213D"]),
+                        legend=None),
+        tooltip=["layer", "risk"])
+    txt = alt.Chart(d).mark_text(align="left", dx=6, fontSize=13, fontWeight=600, color="#14213D").encode(
+        y=y, x="risk:Q", text="risk:Q")
+    c = alt.layer(band, bars, txt).resolve_scale(color="independent").properties(height=alt.Step(40))
+    return _cfg(c.properties(title=alt.TitleParams(title, anchor="start", color="#888780")) if title else c)
+
+
+# ======================================================================= numbers for captions
+def insights(scored=None, sample=None, results=None, rt=None, sweep=None) -> dict:
+    k: dict = {}
+    if sample is not None:
+        a = sample[sample["Is Account Takeover"]]
+        t = pd.to_datetime(a["Login Timestamp"])
+        k["ato_total"] = len(a)
+        k["ato_weekend_pct"] = round((t.dt.dayofweek >= 5).mean() * 100)
+        k["ato_night_pct"] = round(((t.dt.hour + 1) % 24).between(0, 5).mean() * 100)  # 00-06 Norway local (UTC+1)
+        ta = pd.to_datetime(sample["Login Timestamp"])
+        k["all_night_pct"] = round(((ta.dt.hour + 1) % 24).between(0, 5).mean() * 100)
+        k["all_weekend_pct"] = round((ta.dt.dayofweek >= 5).mean() * 100)
+    if scored is not None:
+        legit = scored[(scored["label"] == 0) & scored["success"]]
+        ato = scored[scored["label"] == 1]
+        c = ato["country"].value_counts()
+        k["top_country"], k["top_country_n"], k["ato_n"] = c.index[0], int(c.iloc[0]), len(ato)
+        tc = scored[scored["country"] == c.index[0]]
+        k["top_country_logins"] = len(tc)
+        k["top_country_threat"] = round(tc["threat_ip"].mean() * 100)
+        lt = signal_lift_table(scored)
+        k["best_signal"], k["best_lift"] = lt.iloc[0]["signal"], lt.iloc[0]["lift"]
+        k["best_legit"], k["best_ato"] = lt.iloc[0]["Legitimate"], lt.iloc[0]["Takeover"]
+        k["fails_lift"] = float(lt[lt["signal"] == "Recent failed logins"]["lift"].iloc[0])
+        ft = funnel_table(scored)
+        k["funnel"] = ft
+        k["queue_legit"] = int(ft.iloc[2]["Legitimate"])
+        k["queue_pct"] = round(ft.iloc[2]["Legitimate"] / ft.iloc[0]["Legitimate"] * 100, 1)
+        k["queue_ato"] = int(ft.iloc[2]["Takeover"])
+        k["locked_legit"], k["locked_ato"] = int(ft.iloc[3]["Legitimate"]), int(ft.iloc[3]["Takeover"])
+        k["legit_low"] = round((legit["final"] < 30).mean() * 100, 1)
+        k["ato_high"] = round((ato["final"] >= 70).mean() * 100, 1)
+        k["missed"] = int((ato["action"] == "allow").sum())
+    if rt is not None:
+        d = pd.DataFrame(rt["rows"])
+        k["rt_attempts"], k["rt_held"] = len(d), int(d["held"].sum())
+        k["rt_raised"] = int((d["ai_raw_risk"] > d["base_risk"] + 10).sum())
+        sw = d[d["ai_raw_risk"] < d["base_risk"] - 10]
+        k["rt_lowered"], k["rt_lowered_ato"] = len(sw), int((sw["label"] == 1).sum())
+        k["rt_floor_lifted"] = int((d["final_risk"] > d["ai_raw_risk"]).sum())
+        k["rt_ato_min_raw"] = int(d[d["label"] == 1]["ai_raw_risk"].min())
+    if results is not None:
+        k["syn_ato"] = sum(1 for c in results if c["label"] == 1)
+        k["syn_caught"] = sum(1 for c in results if c["label"] == 1 and c["action"] != "allow")
+        look = [c for c in results if c["label"] == 0 and c["scenario"] != "normal"]
+        k["look_n"] = len(look)
+        k["look_allowed"] = sum(1 for c in look if c["action"] == "allow")
+        k["look_with_rule"] = sum(1 for c in look if c["hits"])
+        frict = [c["scenario"] for c in look if c["action"] != "allow"]
+        k["look_friction"] = ", ".join(f"{s.replace('_', ' ')} ×{n}" for s, n in pd.Series(frict).value_counts().items()) if frict else "none"
+    if sweep:
+        lo = min(sweep, key=lambda s: s["legit_locked_pct"]); hi = max(sweep, key=lambda s: s["legit_locked_pct"])
+        k["sweep_lo"], k["sweep_hi"] = lo, hi
+    return k
