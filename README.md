@@ -7,6 +7,7 @@
 
 | | Link |
 |---|---|
+| 🎬 **Demo video** (2 min) | **https://youtu.be/cLmFXhhFtkQ** |
 | ▶ **Live demo** — test a login in your browser | **https://pengbaier.github.io/sentinel-ato/** |
 | 🎞 **Slides** (16, with speaker notes: press N) | https://pengbaier.github.io/sentinel-ato/slides/ |
 | 📝 **Demo script** — 5-minute core, weaknesses, Q&A | [docs/demo_script.md](docs/demo_script.md) |
