@@ -10,6 +10,7 @@
 | ▶ **Live demo** — test a login in your browser | **https://pengbaier.github.io/sentinel-ato/** |
 | 🎞 **Slides** (16, with speaker notes: press N) | https://pengbaier.github.io/sentinel-ato/slides/ |
 | 📝 **Demo script** — 5-minute core, weaknesses, Q&A | [docs/demo_script.md](docs/demo_script.md) |
+| 🗣 **Chart script** — what each chart shows, its implication, what to say | [docs/chart_script.md](docs/chart_script.md) |
 | 📊 **Charts** — 12 interactive, in five acts | [Gallery below](#visual-insights--the-demo-in-five-acts) · [docs/charts](docs/charts) |
 | 🖥 **Analyst console** (Streamlit) | [Quick start](#quick-start) |
 | 🧩 **Sponsor tools** | [PRISM by Block Convey](https://blockconvey.com/prism) · [Nicrron](https://nicrron.ai) |
