@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@6.4.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "background": "white"}, "data": {"name": "data-00abda0f14f8fe14c62a45b5bea6a731"}, "facet": {"row": {"field": "truth", "header": {"labelAlign": "left", "labelAngle": 0, "labelColor": "#888780"}, "sort": ["Legitimate", "Takeover"], "title": null, "type": "nominal"}}, "spec": {"layer": [{"mark": {"type": "bar", "cornerRadiusTopLeft": 4, "cornerRadiusTopRight": 4, "size": 26}, "encoding": {"color": {"field": "truth", "legend": null, "scale": {"domain": ["Legitimate", "Takeover"], "range": ["#2a78d6", "#eb6834"]}, "type": "nominal"}, "tooltip": [{"field": "truth", "type": "nominal"}, {"field": "bin", "title": "risk \u2265", "type": "ordinal"}, {"field": "n", "format": ",", "title": "logins", "type": "quantitative"}, {"field": "share", "format": ".2f", "title": "% of group", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0}, "field": "bin", "title": "Final risk score (bucket start)", "type": "ordinal"}, "y": {"field": "share", "title": "% of group", "type": "quantitative"}}}], "height": 150, "width": 320}, "resolve": {"scale": {"y": "independent"}}, "$schema": "https://vega.github.io/schema/vega-lite/v6.4.1.json", "datasets": {"data-00abda0f14f8fe14c62a45b5bea6a731": [{"truth": "Legitimate", "bin": 0, "n": 64767, "share": 85.37138337836947}, {"truth": "Legitimate", "bin": 10, "n": 4690, "share": 6.182033875963883}, {"truth": "Legitimate", "bin": 20, "n": 1407, "share": 1.8546101627891651}, {"truth": "Legitimate", "bin": 30, "n": 340, "share": 0.4481645027351216}, {"truth": "Legitimate", "bin": 40, "n": 4399, "share": 5.7984577868582345}, {"truth": "Legitimate", "bin": 50, "n": 82, "share": 0.10808673301258816}, {"truth": "Legitimate", "bin": 60, "n": 18, "share": 0.023726356027153495}, {"truth": "Legitimate", "bin": 70, "n": 106, "share": 0.13972187438212616}, {"truth": "Legitimate", "bin": 80, "n": 56, "share": 0.07381532986225532}, {"truth": "Takeover", "bin": 0, "n": 9, "share": 10.344827586206897}, {"truth": "Takeover", "bin": 10, "n": 2, "share": 2.2988505747126435}, {"truth": "Takeover", "bin": 20, "n": 1, "share": 1.1494252873563218}, {"truth": "Takeover", "bin": 30, "n": 11, "share": 12.643678160919542}, {"truth": "Takeover", "bin": 40, "n": 11, "share": 12.643678160919542}, {"truth": "Takeover", "bin": 50, "n": 6, "share": 6.896551724137931}, {"truth": "Takeover", "bin": 60, "n": 3, "share": 3.4482758620689653}, {"truth": "Takeover", "bin": 70, "n": 42, "share": 48.275862068965516}, {"truth": "Takeover", "bin": 80, "n": 2, "share": 2.2988505747126435}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

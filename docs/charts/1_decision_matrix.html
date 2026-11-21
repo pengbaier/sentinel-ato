@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@6.4.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "background": "white"}, "layer": [{"mark": {"type": "rect", "cornerRadius": 4, "stroke": "white", "strokeWidth": 2}, "encoding": {"color": {"field": "share", "legend": {"orient": "right"}, "scale": {"domain": [0, 100], "range": ["#cde2fb", "#86b6ef", "#3987e5", "#1c5cab", "#0d366b"]}, "title": "% of row", "type": "quantitative"}, "tooltip": [{"field": "truth", "type": "nominal"}, {"field": "action", "type": "nominal"}, {"field": "n", "format": ",", "title": "logins", "type": "quantitative"}, {"field": "share", "format": ".2f", "title": "% of row", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0, "orient": "top"}, "field": "action", "sort": ["\ud83d\udfe2 allow", "\ud83d\udfe1 MFA challenge", "\ud83d\udd34 lock"], "title": "Sentinel's decision", "type": "nominal"}, "y": {"axis": {"labelFontSize": 12, "labelLimit": 260}, "field": "truth", "sort": ["Takeover", "Legitimate (successful)", "Legitimate (failed attempt)"], "title": null, "type": "nominal"}}}, {"mark": {"type": "text", "fontSize": 13, "fontWeight": 600}, "encoding": {"color": {"condition": {"test": "datum['share'] > 45", "value": "#ffffff"}, "value": "#0b0b0b"}, "text": {"field": "label", "type": "nominal"}, "x": {"axis": {"labelAngle": 0, "orient": "top"}, "field": "action", "sort": ["\ud83d\udfe2 allow", "\ud83d\udfe1 MFA challenge", "\ud83d\udd34 lock"], "title": "Sentinel's decision", "type": "nominal"}, "y": {"axis": {"labelFontSize": 12, "labelLimit": 260}, "field": "truth", "sort": ["Takeover", "Legitimate (successful)", "Legitimate (failed attempt)"], "title": null, "type": "nominal"}}}], "data": {"name": "data-1b1330a6375cf0e6ebab80b0e4e8c787"}, "height": {"step": 52}, "width": 760, "$schema": "https://vega.github.io/schema/vega-lite/v6.4.1.json", "datasets": {"data-1b1330a6375cf0e6ebab80b0e4e8c787": [{"truth": "Legitimate (failed attempt)", "action": "\ud83d\udd34 lock", "n": 4107, "share": 11.22744669218152, "label": "11.2%  (4,107)"}, {"truth": "Legitimate (failed attempt)", "action": "\ud83d\udfe1 MFA challenge", "n": 18007, "share": 49.226353198469106, "label": "49.2%  (18,007)"}, {"truth": "Legitimate (failed attempt)", "action": "\ud83d\udfe2 allow", "n": 14466, "share": 39.54620010934937, "label": "39.5%  (14,466)"}, {"truth": "Legitimate (successful)", "action": "\ud83d\udd34 lock", "n": 162, "share": 0.21353720424438144, "label": "0.2%  (162)"}, {"truth": "Legitimate (successful)", "action": "\ud83d\udfe1 MFA challenge", "n": 4839, "share": 6.378435378633099, "label": "6.4%  (4,839)"}, {"truth": "Legitimate (successful)", "action": "\ud83d\udfe2 allow", "n": 70864, "share": 93.40802741712253, "label": "93.4%  (70,864)"}, {"truth": "Takeover", "action": "\ud83d\udd34 lock", "n": 44, "share": 50.57471264367817, "label": "50.6%  (44)"}, {"truth": "Takeover", "action": "\ud83d\udfe1 MFA challenge", "n": 31, "share": 35.63218390804598, "label": "35.6%  (31)"}, {"truth": "Takeover", "action": "\ud83d\udfe2 allow", "n": 12, "share": 13.793103448275861, "label": "13.8%  (12)"}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

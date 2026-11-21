@@ -1,0 +1,29 @@
+{
+ "source": "RBA dataset (Wiefling et al. 2022), user sample",
+ "threat_intel_feed": false,
+ "eval_logins": 112532,
+ "takeover_logins": 87,
+ "legit_successful_logins": 75865,
+ "takeovers_challenged_or_locked_pct": 79.31,
+ "takeovers_locked_pct": 9.2,
+ "legit_allowed_silently_pct": 98.27,
+ "legit_step_up_pct": 1.58,
+ "legit_locked_pct": 0.15,
+ "auc_final": 0.814,
+ "auc_anomaly_only": 0.8522,
+ "auc_rules_only": 0.5768,
+ "llm_cases": 0,
+ "lock_policy": {
+  "corroborated": 57,
+  "alone": 70
+ },
+ "takeover_actions": {
+  "allow": 18,
+  "step_up": 61,
+  "lock": 8
+ },
+ "rule_hits_on_takeovers": {
+  "NEW_DEVICE_COUNTRY_NETWORK": 13,
+  "CREDENTIAL_STUFFING": 1
+ }
+}

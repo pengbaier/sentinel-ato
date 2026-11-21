@@ -1,0 +1,80 @@
+[
+ {
+  "setting": "no blending",
+  "takeovers_challenged_or_locked_pct": 86.21,
+  "takeovers_locked_pct": 26.44,
+  "legit_allowed_silently_pct": 93.41,
+  "legit_step_up_pct": 6.48,
+  "legit_locked_pct": 0.11,
+  "auc_final": 0.8293,
+  "lock_policy": {
+   "corroborated": 101,
+   "alone": 101
+  }
+ },
+ {
+  "setting": "target 0.05%",
+  "takeovers_challenged_or_locked_pct": 86.21,
+  "takeovers_locked_pct": 28.74,
+  "legit_allowed_silently_pct": 93.41,
+  "legit_step_up_pct": 6.46,
+  "legit_locked_pct": 0.13,
+  "auc_final": 0.8318,
+  "lock_policy": {
+   "corroborated": 69,
+   "alone": 71
+  }
+ },
+ {
+  "setting": "target 0.2%",
+  "takeovers_challenged_or_locked_pct": 86.21,
+  "takeovers_locked_pct": 58.62,
+  "legit_allowed_silently_pct": 93.41,
+  "legit_step_up_pct": 6.2,
+  "legit_locked_pct": 0.4,
+  "auc_final": 0.8639,
+  "lock_policy": {
+   "corroborated": 54,
+   "alone": 65
+  }
+ },
+ {
+  "setting": "target 0.4%",
+  "takeovers_challenged_or_locked_pct": 86.21,
+  "takeovers_locked_pct": 63.22,
+  "legit_allowed_silently_pct": 93.41,
+  "legit_step_up_pct": 5.9,
+  "legit_locked_pct": 0.69,
+  "auc_final": 0.8658,
+  "lock_policy": {
+   "corroborated": 44,
+   "alone": 60
+  }
+ },
+ {
+  "setting": "no threat intel",
+  "takeovers_challenged_or_locked_pct": 79.31,
+  "takeovers_locked_pct": 9.2,
+  "legit_allowed_silently_pct": 98.27,
+  "legit_step_up_pct": 1.58,
+  "legit_locked_pct": 0.15,
+  "auc_final": 0.814,
+  "lock_policy": {
+   "corroborated": 57,
+   "alone": 70
+  }
+ },
+ {
+  "setting": "target 0.1% (default)",
+  "takeovers_challenged_or_locked_pct": 86.21,
+  "takeovers_locked_pct": 50.57,
+  "legit_allowed_silently_pct": 93.41,
+  "legit_step_up_pct": 6.38,
+  "legit_locked_pct": 0.21,
+  "auc_final": 0.8548,
+  "lock_policy": {
+   "corroborated": 61,
+   "alone": 68
+  }
+ }
+]

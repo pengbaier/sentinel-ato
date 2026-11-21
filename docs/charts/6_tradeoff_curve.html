@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@6.4.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "background": "white"}, "layer": [{"data": {"name": "data-0e34c4928bcc54f02d4d2be8a9e89e58"}, "mark": {"type": "rule", "color": "#888780", "strokeDash": [4, 4]}, "encoding": {"x": {"field": "x", "type": "quantitative"}}}, {"data": {"name": "data-2f5ed22185e46d38269d66ab63115d1b"}, "mark": {"type": "line", "color": "#2a78d6", "point": {"color": "#2a78d6", "filled": true, "size": 90}, "strokeWidth": 2}, "encoding": {"tooltip": [{"field": "setting", "type": "nominal"}, {"field": "legit", "title": "legit locked %", "type": "quantitative"}, {"field": "ato", "title": "takeovers locked %", "type": "quantitative"}, {"field": "challenged", "title": "takeovers challenged or locked %", "type": "quantitative"}], "x": {"field": "legit", "title": "Legitimate logins locked (%)", "type": "quantitative"}, "y": {"field": "ato", "scale": {"domain": [0, 100]}, "title": "Takeover logins locked (%)", "type": "quantitative"}}}, {"data": {"name": "data-46d2398cd787f7f3e7373f1d2452a649"}, "mark": {"type": "text", "align": "left", "color": "#888780", "dx": 8, "fontSize": 11}, "encoding": {"text": {"field": "setting", "type": "nominal"}, "x": {"field": "legit", "type": "quantitative"}, "y": {"field": "ato", "type": "quantitative"}, "yOffset": {"field": "dy", "type": "quantitative"}}}, {"data": {"name": "data-9e0ca1b63519f1ff13f1a9a0868843f2"}, "mark": {"type": "point", "color": "#eb6834", "filled": true, "shape": "diamond", "size": 110}, "encoding": {"tooltip": [{"field": "setting", "type": "nominal"}, {"field": "legit", "type": "quantitative"}, {"field": "ato", "type": "quantitative"}], "x": {"field": "legit", "type": "quantitative"}, "y": {"field": "ato", "type": "quantitative"}}}, {"data": {"name": "data-9e0ca1b63519f1ff13f1a9a0868843f2"}, "mark": {"type": "text", "align": "left", "color": "#888780", "dx": 8, "fontSize": 11}, "encoding": {"text": {"field": "setting", "type": "nominal"}, "x": {"field": "legit", "type": "quantitative"}, "y": {"field": "ato", "type": "quantitative"}}}], "height": 320, "width": 560, "$schema": "https://vega.github.io/schema/vega-lite/v6.4.1.json", "datasets": {"data-0e34c4928bcc54f02d4d2be8a9e89e58": [{"x": 0.2}], "data-2f5ed22185e46d38269d66ab63115d1b": [{"setting": "no blending", "legit": 0.11, "ato": 26.44, "challenged": 86.21}, {"setting": "target 0.05%", "legit": 0.13, "ato": 28.74, "challenged": 86.21}, {"setting": "target 0.1% (default)", "legit": 0.21, "ato": 50.57, "challenged": 86.21}, {"setting": "target 0.2%", "legit": 0.4, "ato": 58.62, "challenged": 86.21}, {"setting": "target 0.4%", "legit": 0.69, "ato": 63.22, "challenged": 86.21}], "data-46d2398cd787f7f3e7373f1d2452a649": [{"setting": "no blending", "legit": 0.11, "ato": 26.44, "challenged": 86.21, "dy": 14}, {"setting": "target 0.1% (default)", "legit": 0.21, "ato": 50.57, "challenged": 86.21, "dy": -12}, {"setting": "target 0.4%", "legit": 0.69, "ato": 63.22, "challenged": 86.21, "dy": -12}], "data-9e0ca1b63519f1ff13f1a9a0868843f2": [{"setting": "no threat intel", "legit": 0.15, "ato": 9.2, "challenged": 79.31}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

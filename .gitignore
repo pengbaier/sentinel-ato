@@ -1,0 +1,23 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# environments / caches
+.venv/
+__pycache__/
+*.pyc
+.streamlit/secrets.toml
+
+# local tooling
+.claude/
+
+# raw dataset download (1 GB) - fetch with the command in data/README.md
+data/raw/
+
+# synthetic data is regenerated in seconds by `python -m sentinel.data_gen` (and on first dashboard load)
+data/events.jsonl
+data/cases.json
+data/users.json
+data/results.json
+data/results_llm.json

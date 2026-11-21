@@ -1,0 +1,9 @@
+numpy>=2.0
+pandas>=2.2
+scikit-learn>=1.5
+streamlit>=1.50
+altair>=5.4
+openai>=1.50
+python-dotenv>=1.0
+requests>=2.32
+vl-convert-python>=1.6   # only for `python -m sentinel.export_charts`
